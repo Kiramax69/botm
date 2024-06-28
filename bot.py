@@ -7,7 +7,7 @@ from requests.auth import HTTPBasicAuth
 TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
 
 # URL и ключи для FastPanel API
-FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails'  # Проверьте корректность URL
+FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes/new'  # Проверьте корректность URL
 FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 FASTPANEL_API_KEY = 'cd707aa8635689043f7be0a3265f9995d4a7ba49c3b488d45d5ebbc6c266ea0a5c810924aff1ad75f406b1df530f6593'
