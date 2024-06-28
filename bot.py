@@ -46,6 +46,3 @@ def create_email(message):
 
 def main():
     bot.polling()
-
-if name == 'main':
-    main()
