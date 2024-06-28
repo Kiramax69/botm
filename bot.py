@@ -25,7 +25,7 @@ def create_email(message):
         bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create_email username")
         return
     
-    domain = 'yourdomain.com'  # Ваш домен
+    domain = 'sukaa.ru'  # Ваш домен
     email = f"{username}@{domain}"
     password = 'temporary_password'  # Генерация временного пароля
 
