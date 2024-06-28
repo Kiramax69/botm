@@ -6,7 +6,7 @@ from requests.auth import HTTPBasicAuth
 TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
 
 # URL и ключи для FastPanel API
-FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes'
+FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888'
 FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
