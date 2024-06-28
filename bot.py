@@ -1,16 +1,18 @@
-
 import telebot
-import requests
-from requests.auth import HTTPBasicAuth
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import time
 
 # Установите свой токен бота Telegram
 TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
 
-# URL и ключи для FastPanel API
-FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes/new'  # Проверьте корректность URL
+# Данные для входа в FastPanel
+FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes'
 FASTPANEL_USERNAME = 'fastuser'
-FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
-FASTPANEL_API_KEY = 'cd707aa8635689043f7be0a3265f9995d4a7ba49c3b488d45d5ebbc6c266ea0a5c810924aff1ad75f406b1df530f6593'
+FASTPANEL_PASSWORD = 'Aeng7oi7sonv'
 
 # Создание бота
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -31,29 +33,36 @@ def create_email(message):
     email = f"{username}@{domain}"
     password = 'temporary_password'  # Генерация временного пароля
 
-    # Запрос на создание почтового ящика в FastPanel
-    auth = HTTPBasicAuth(FASTPANEL_USERNAME, FASTPANEL_PASSWORD)
-    headers = {
-        'Authorization': f'Bearer {FASTPANEL_API_KEY}',
-        'Content-Type': 'application/json'
-    }
-    payload = {
-        "email": email,
-        "password": password
-    }
+    # Запуск браузера и выполнение действий
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.get(FASTPANEL_URL)
     
-    try:
-        response = requests.post(FASTPANEL_API_URL, headers=headers, json=payload, auth=auth)
-        
-        # Логирование статуса и текста ответа
-        print(f"Response status code: {response.status_code}")
-        print(f"Response text: {response.text}")
-        
-        if response.status_code == 201:
-            bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
-        else:
-            bot.reply_to(message, f'Ошибка при создании почтового ящика: {response.text}')
-    except requests.exceptions.RequestException as e:
-        bot.reply_to(message, f'Произошла ошибка при подключении к FastPanel API: {e}')
+    # Ввод данных для входа
+    driver.find_element(By.NAME, 'username').send_keys(FASTPANEL_USERNAME)
+    driver.find_element(By.NAME, 'password').send_keys(FASTPANEL_PASSWORD)
+    driver.find_element(By.NAME, 'password').send_keys(Keys.RETURN)
+    
+    time.sleep(5)  # Дождаться загрузки панели
+    
+    # Нажать на кнопку "НОВЫЙ ЯЩИК"
+    new_mailbox_button = driver.find_element(By.XPATH, '//button[text()="Новый ящик"]')
+    new_mailbox_button.click()
+    
+    time.sleep(2)  # Дождаться открытия формы
+    
+    # Заполнение формы для создания нового почтового ящика
+    driver.find_element(By.NAME, 'email').send_keys(email)
+    driver.find_element(By.NAME, 'password').send_keys(password)
+    driver.find_element(By.NAME, 'password_confirm').send_keys(password)
+    
+    # Нажать на кнопку для сохранения нового почтового ящика
+    save_button = driver.find_element(By.XPATH, '//button[text()="Сохранить"]')
+    save_button.click()
+    
+    time.sleep(2)  # Дождаться создания почтового ящика
+    
+    driver.quit()
+    bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
 
 bot.polling()
+
