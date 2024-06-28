@@ -1,12 +1,14 @@
 import telebot
 import requests
+from requests.auth import HTTPBasicAuth
 
 # Установите свой токен бота Telegram
 TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
 
 # URL и ключи для FastPanel API
 FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes'
-FASTPANEL_API_KEY = 'cd707aa8635689043f7be0a3265f9995d4a7ba49c3b488d45d5ebbc6c266ea0a5c810924aff1ad75f406b1df530f6593'
+FASTPANEL_USERNAME = 'fastuser'
+FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
 # Создание бота
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -23,13 +25,13 @@ def create_email(message):
         bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create_email username")
         return
     
-    domain = 'sukaa.ru'  # Ваш домен
+    domain = 'yourdomain.com'  # Ваш домен
     email = f"{username}@{domain}"
     password = 'temporary_password'  # Генерация временного пароля
 
     # Запрос на создание почтового ящика в FastPanel
+    auth = HTTPBasicAuth(FASTPANEL_USERNAME, FASTPANEL_PASSWORD)
     headers = {
-        'Authorization': f'Bearer {FASTPANEL_API_KEY}',
         'Content-Type': 'application/json'
     }
     payload = {
@@ -37,7 +39,7 @@ def create_email(message):
         "password": password
     }
     
-    response = requests.post(f'{FASTPANEL_API_URL}/mailboxes', headers=headers, json=payload)
+    response = requests.post(f'{FASTPANEL_API_URL}/mailboxes', headers=headers, json=payload, auth=auth)
     
     if response.status_code == 201:
         bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
