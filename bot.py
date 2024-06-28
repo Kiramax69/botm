@@ -1,3 +1,4 @@
+
 import telebot
 import requests
 from requests.auth import HTTPBasicAuth
@@ -6,9 +7,10 @@ from requests.auth import HTTPBasicAuth
 TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
 
 # URL и ключи для FastPanel API
-FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888'
+FASTPANEL_API_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes'  # Проверьте корректность URL
 FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
+FASTPANEL_API_KEY = 'cd707aa8635689043f7be0a3265f9995d4a7ba49c3b488d45d5ebbc6c266ea0a5c810924aff1ad75f406b1df530f6593'
 
 # Создание бота
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -32,6 +34,7 @@ def create_email(message):
     # Запрос на создание почтового ящика в FastPanel
     auth = HTTPBasicAuth(FASTPANEL_USERNAME, FASTPANEL_PASSWORD)
     headers = {
+        'Authorization': f'Bearer {FASTPANEL_API_KEY}',
         'Content-Type': 'application/json'
     }
     payload = {
@@ -39,11 +42,18 @@ def create_email(message):
         "password": password
     }
     
-    response = requests.post(f'{FASTPANEL_API_URL}/mailboxes', headers=headers, json=payload, auth=auth)
-    
-    if response.status_code == 201:
-        bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
-    else:
-        bot.reply_to(message, f'Ошибка при создании почтового ящика: {response.text}')
+    try:
+        response = requests.post(FASTPANEL_API_URL, headers=headers, json=payload, auth=auth)
+        
+        # Логирование статуса и текста ответа
+        print(f"Response status code: {response.status_code}")
+        print(f"Response text: {response.text}")
+        
+        if response.status_code == 201:
+            bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
+        else:
+            bot.reply_to(message, f'Ошибка при создании почтового ящика: {response.text}')
+    except requests.exceptions.RequestException as e:
+        bot.reply_to(message, f'Произошла ошибка при подключении к FastPanel API: {e}')
 
 bot.polling()
