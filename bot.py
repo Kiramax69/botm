@@ -44,5 +44,4 @@ def create_email(message):
     else:
         bot.reply_to(message, f'Ошибка при создании почтового ящика: {response.text}')
 
-def main():
-    bot.polling()
+bot.polling()
