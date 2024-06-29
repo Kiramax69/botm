@@ -1,4 +1,3 @@
-
 import telebot
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -6,10 +5,10 @@ import logging
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(name)  # Используем имя текущего модуля
 
 # Initialize the Telegram bot
-bot = telebot.TeleBot('7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k')
+bot = telebot.TeleBot('7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1kE')
 
 # Function to handle the /start command
 @bot.message_handler(commands=['start'])
@@ -21,11 +20,15 @@ def send_welcome(message):
 def place_order(message):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")  # Run in headless mode (no UI)
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
     
     driver = None  # Инициализация переменной driver
 
     try:
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(executable_path='/path/to/chromedriver', options=options)
         logger.info("WebDriver initialized successfully")
         
         # Navigate to the website
