@@ -1,20 +1,23 @@
-
 import random
 from faker import Faker
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
+import telebot
 
 fake = Faker()
 
+# Initialize the Telegram bot
+bot = telebot.TeleBot('7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k')
+
 # Function to handle the /start command
-def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Hello! Use /order to place an order.')
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "Hello! Use /order to place an order.")
 
 # Function to handle the /order command
-def order(update: Update, context: CallbackContext) -> None:
+@bot.message_handler(commands=['order'])
+def place_order(message):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")  # Run in headless mode (no UI)
     driver = webdriver.Chrome(options=options)
@@ -59,23 +62,13 @@ def order(update: Update, context: CallbackContext) -> None:
         confirm_button = driver.find_element(By.XPATH, '//button[contains(text(), "ПОДТВЕРДИТЬ ЗАКАЗ")]')
         confirm_button.click()
 
-        update.message.reply_text('Order placed successfully!')
+        bot.reply_to(message, 'Order placed successfully!')
 
     except Exception as e:
-        update.message.reply_text(f'An error occurred: {e}')
+        bot.reply_to(message, f'An error occurred: {e}')
 
     finally:
         driver.quit()
 
-def main():
-    # Replace 'YOUR_TOKEN_HERE' with your actual Telegram bot token
-    updater = Updater("7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k")
-
-    updater.dispatcher.add_handler(CommandHandler("start", start))
-    updater.dispatcher.add_handler(CommandHandler("order", order))
-
-    updater.start_polling()
-    updater.idle()
-
-if name == 'main':
-    main()
+# Start polling
+bot.polling()
