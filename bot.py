@@ -6,16 +6,13 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-# Установите свой токен бота Telegram
-TELEGRAM_BOT_TOKEN = '6332761306:AAHfCNJirktYQjb15p4TzjprXfB_VZ-d5PY'
-
 # Данные для входа в FastPanel
 FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru'
 FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
 # Создание бота
-bot = telebot.TeleBot(6332761306:AAHfCNJirktYQjb15p4TzjprXfB_VZ-d5PY)
+bot = telebot.TeleBot(7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -26,7 +23,7 @@ def create_email(message):
     try:
         username = message.text.split()[1]
     except IndexError:
-        bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create_email username")
+        bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create username")
         return
     
     domain = 'sukaa.ru'  # Ваш домен
