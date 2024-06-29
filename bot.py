@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 # Установите свой токен бота Telegram
-TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
 
 # Данные для входа в FastPanel
 FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru'
