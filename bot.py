@@ -1,14 +1,15 @@
 import telebot
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import logging
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)  # Используем имя текущего модуля
+logger = logging.getLogger(name)  # Используем имя текущего модуля
 
 # Initialize the Telegram bot
-bot = telebot.TeleBot('7141698892:AAGMs0WFMADNOpGapquT42edJrXYbnSDDHc')
+bot = telebot.TeleBot('7141698892:AAGMs0WFMADNOpGapquT42edJrXYbnSDDHcE')
 
 # Function to handle the /start command
 @bot.message_handler(commands=['start'])
@@ -28,7 +29,8 @@ def place_order(message):
     driver = None  # Инициализация переменной driver
 
     try:
-        driver = webdriver.Chrome(executable_path='/path/to/chromedriver', options=options)
+        service = Service('/path/to/chromedriver')  # Используем Service для указания пути к ChromeDriver
+        driver = webdriver.Chrome(service=service, options=options)
         logger.info("WebDriver initialized successfully")
         
         # Navigate to the website
