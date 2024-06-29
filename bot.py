@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 # Установите свой токен бота Telegram
-TELEGRAM_BOT_TOKEN = '6332761306:AAHVl8VjgeKsOQH55r7PSAWwfEJ8sMcSPEI'
+TELEGRAM_BOT_TOKEN = '6332761306:AAHfCNJirktYQjb15p4TzjprXfB_VZ-d5PY'
 
 # Данные для входа в FastPanel
 FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru'
@@ -15,7 +15,7 @@ FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
 # Создание бота
-bot = telebot.TeleBot(6332761306:AAHVl8VjgeKsOQH55r7PSAWwfEJ8sMcSPEI)
+bot = telebot.TeleBot(6332761306:AAHfCNJirktYQjb15p4TzjprXfB_VZ-d5PY)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
