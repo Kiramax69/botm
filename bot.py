@@ -45,7 +45,7 @@ def cont(message):
     elif re.search(r'(?i)^найди (.+)', message.text):
         search_images(message)
     else:
-        bot.send_message(message.chat.id, 'Неизвестная команда.')
+        pass
 
 def send_csgo_invite(message):
     bot.send_message(message.chat.id, f' *Позвал в коес:* @{message.from_user.username}\n\n @Asia51 @RunDelChaOs @prodcuddly @Shinigamiplay', parse_mode="Markdown")
