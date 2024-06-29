@@ -2,7 +2,7 @@ import telebot
 import requests
 import re
 
-bot = telebot.TeleBot('1970145138:AAE0BxCzW-0PbbQKpF8sl0vjMKJbCaewZFs')
+bot = telebot.TeleBot('ВАШ_ТОКЕН_БОТА')
 GOOGLE_API_KEY = 'AIzaSyBNTHIYzSDu2swXDL6qxHW0X1W-CoGcZyg'
 CX = '8061ad7ffd11e4c56'
 
@@ -58,14 +58,26 @@ def send_all_invite(message):
 
 def search_images(message):
     search_query = re.search(r'(?i)^найди (.+)', message.text).group(1)
-    url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&cx={CX}&key={GOOGLE_API_KEY}&searchType=image&num=1"
+    url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&cx={CX}&key={GOOGLE_API_KEY}&searchType=image&num=20"
     response = requests.get(url)
     result = response.json()
 
     if 'items' in result:
-        image_url = result['items'][0]['link']
-        bot.send_photo(message.chat.id, image_url)
+        images = [item['link'] for item in result['items']]
+        send_image_options(message, images)
     else:
         bot.send_message(message.chat.id, 'Картинки не найдены.')
+
+def send_image_options(message, images):
+    markup = telebot.types.InlineKeyboardMarkup()
+    for i, image_url in enumerate(images):
+        markup.add(telebot.types.InlineKeyboardButton(text=f'Изображение {i+1}', callback_data=image_url))
+    bot.send_message(message.chat.id, 'Выберите изображение для отправки:', reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    if call.data:
+        bot.send_photo(call.message.chat.id, call.data)
+        bot.answer_callback_query(call.id)
 
 bot.polling()
