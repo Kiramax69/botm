@@ -1,4 +1,3 @@
-
 import telebot
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -27,7 +26,8 @@ def place_order(message):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
-    
+    options.add_argument("--remote-debugging-port=9222")  # Добавляем этот параметр
+
     driver = None  # Инициализация переменной driver
 
     try:
