@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)  # Используем имя текущего модуля
 
 # Initialize the Telegram bot
-bot = telebot.TeleBot('7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1kE')
+bot = telebot.TeleBot('7141698892:AAGMs0WFMADNOpGapquT42edJrXYbnSDDHc')
 
 # Function to handle the /start command
 @bot.message_handler(commands=['start'])
