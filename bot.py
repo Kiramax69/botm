@@ -21,8 +21,6 @@ def place_order(message):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")  # Run in headless mode (no UI)
     driver = webdriver.Chrome(options=options)
-
-    try:
         # Navigate to the website
         driver.get('https://sushivani.ru/menu/setyi/set-king-size')
 
