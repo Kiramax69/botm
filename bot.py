@@ -1,66 +1,81 @@
-import telebot
+
+import random
+from faker import Faker
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-import time
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
-TELEGRAMBOT_API = '7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k'
+fake = Faker()
 
-# Данные для входа в FastPanel
-FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru'
-FASTPANEL_USERNAME = 'fastuser'
-FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
+# Function to handle the /start command
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! Use /order to place an order.')
 
-# Создание бота
-bot = telebot.TeleBot(TELEGRAMBOT_API)
+# Function to handle the /order command
+def order(update: Update, context: CallbackContext) -> None:
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")  # Run in headless mode (no UI)
+    driver = webdriver.Chrome(options=options)
 
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Привет! Используйте команду /create <username> для создания почтового ящика.")
-
-@bot.message_handler(commands=['create'])
-def create_email(message):
     try:
-        username = message.text.split()[1]
-    except IndexError:
-        bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create username")
-        return
-    
-    domain = 'sukaa.ru'  # Ваш домен
-    email = f"{username}@{domain}"
-    password = 'temporary_password'  # Генерация временного пароля
+        # Navigate to the website
+        driver.get('https://sushivani.ru/menu/setyi/set-king-size')
 
-    # Запуск браузера и выполнение действий
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    driver.get(FASTPANEL_URL)
-    
-    # Ввод данных для входа
-    driver.find_element(By.NAME, 'username').send_keys(FASTPANEL_USERNAME)
-    driver.find_element(By.NAME, 'password').send_keys(FASTPANEL_PASSWORD)
-    driver.find_element(By.NAME, 'password').send_keys(Keys.RETURN)
-    
-    time.sleep(5)  # Дождаться загрузки панели
-    
-    # Нажать на кнопку "НОВЫЙ ЯЩИК"
-    new_mailbox_button = driver.find_element(By.XPATH, '//button[text()="Новый ящик"]')
-    new_mailbox_button.click()
-    
-    time.sleep(2)  # Дождаться открытия формы
-    
-    # Заполнение формы для создания нового почтового ящика
-    driver.find_element(By.NAME, 'email').send_keys(email)
-    driver.find_element(By.NAME, 'password').send_keys(password)
-    driver.find_element(By.NAME, 'password_confirm').send_keys(password)
-    
-    # Нажать на кнопку для сохранения нового почтового ящика
-    save_button = driver.find_element(By.XPATH, '//button[text()="Сохранить"]')
-    save_button.click()
-    
-    time.sleep(2)  # Дождаться создания почтового ящика
-    
-    driver.quit()
-    bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
-    
-bot.polling()
+        # Click the "ЗАКАЗАТЬ" button
+        order_button = driver.find_element(By.XPATH, '//button[contains(text(), "ЗАКАЗАТЬ")]')
+        order_button.click()
+
+        # Click the "Корзина" link
+        cart_link = driver.find_element(By.XPATH, '//a[contains(text(), "Корзина")]')
+        cart_link.click()
+
+        # Fill in the form with random data
+        driver.find_element(By.NAME, 'name').send_keys(fake.name())
+        driver.find_element(By.NAME, 'email').send_keys(fake.email())
+        driver.find_element(By.NAME, 'phone').send_keys(fake.phone_number())
+        driver.find_element(By.NAME, 'persons').send_keys(str(random.randint(1, 10)))
+        driver.find_element(By.NAME, 'promo_code').send_keys('')  # leave blank if no promo code
+
+        driver.find_element(By.NAME, 'street').send_keys(fake.street_name())
+        driver.find_element(By.NAME, 'house').send_keys(str(random.randint(1, 100)))
+        driver.find_element(By.NAME, 'building').send_keys('')  # leave blank if not applicable
+        driver.find_element(By.NAME, 'entrance').send_keys(str(random.randint(1, 10)))
+        driver.find_element(By.NAME, 'floor').send_keys(str(random.randint(1, 10)))
+        driver.find_element(By.NAME, 'apartment').send_keys(str(random.randint(1, 100)))
+        driver.find_element(By.NAME, 'order_time').send_keys('')  # leave blank if no specific time
+        driver.find_element(By.NAME, 'order_notes').send_keys(fake.text())
+
+        # Select payment method: "Банковская карта"
+        card_payment = driver.find_element(By.XPATH, '//input[@value="card"]')
+        card_payment.click()
+
+        # Agree to the terms
+        agree_terms = driver.find_element(By.XPATH, '//input[@name="agree_terms"]')
+        agree_terms.click()
+
+        # Confirm the order
+        confirm_button = driver.find_element(By.XPATH, '//button[contains(text(), "ПОДТВЕРДИТЬ ЗАКАЗ")]')
+        confirm_button.click()
+
+        update.message.reply_text('Order placed successfully!')
+
+    except Exception as e:
+        update.message.reply_text(f'An error occurred: {e}')
+
+    finally:
+        driver.quit()
+
+def main():
+    # Replace 'YOUR_TOKEN_HERE' with your actual Telegram bot token
+    updater = Updater("7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k")
+
+    updater.dispatcher.add_handler(CommandHandler("start", start))
+    updater.dispatcher.add_handler(CommandHandler("order", order))
+
+    updater.start_polling()
+    updater.idle()
+
+if name == 'main':
+    main()
