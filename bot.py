@@ -92,8 +92,6 @@ def cont(message):
 
         bot.send_message(message.chat.id,'Он не хочет что-бы его тегали.')
 
-
-# Обработчик инлайн-запросов
 @bot.inline_handler(lambda query: len(query.query) > 0)
 def inline_query(query):
     try:
@@ -108,9 +106,9 @@ def inline_query(query):
             for i, image in enumerate(images):
                 results.append(types.InlineQueryResultPhoto(
                     id=str(i),
-                    title=f'Image {i+1}',
                     photo_url=image['link'],
-                    thumb_url=image['link']
+                    thumb_url=image['link'],
+                    caption=f'Image {i+1}'
                 ))
 
             bot.answer_inline_query(query.id, results, cache_time=1)
