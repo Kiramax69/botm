@@ -1,22 +1,14 @@
 import telebot
-from telebot import types
 import requests
 import re
 
-bot = telebot.TeleBot('1970145138:AAE0BxCzW-0PbbQKpF8sl0vjMKJbCaewZFs')
+bot = telebot.TeleBot('ВАШ_ТОКЕН_БОТА')
 GOOGLE_API_KEY = 'AIzaSyBNTHIYzSDu2swXDL6qxHW0X1W-CoGcZyg'
 CX = '8061ad7ffd11e4c56'
 
-def main():
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton('Го кс')
-    item2 = types.KeyboardButton('Тест')
-    markup.add(item1, item2)
-    return markup
-
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, 'Бот группы Co-Op CS:GO', reply_markup=main())
+    bot.send_message(message.chat.id, 'Бот группы Co-Op CS:GO')
 
 @bot.message_handler(commands=['delete'])
 def delete(message):
@@ -27,7 +19,7 @@ def delete(message):
 
 @bot.message_handler(commands=['donate'])
 def donate(message):
-    bot.send_message(message.chat.id, 'Хостинг не бесплатный донатить сюда :D\n\n Payeer: P1018613468', reply_markup=main())
+    bot.send_message(message.chat.id, 'Хостинг не бесплатный донатить сюда :D\n\n Payeer: P1018613468')
 
 @bot.message_handler(content_types=['text'])
 def cont(message):
