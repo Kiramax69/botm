@@ -5,7 +5,7 @@ import logging
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(name)  # Используем имя текущего модуля
+logger = logging.getLogger(__name__)  # Используем имя текущего модуля
 
 # Initialize the Telegram bot
 bot = telebot.TeleBot('7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1kE')
