@@ -1,121 +1,67 @@
 import telebot
-from telebot import types
-import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import time
 
+# Установите свой токен бота Telegram
+TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
 
-from telebot import types
+# Данные для входа в FastPanel
+FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru'
+FASTPANEL_USERNAME = 'fastuser'
+FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
-
-
-bot = telebot.TeleBot('1970145138:AAE0BxCzW-0PbbQKpF8sl0vjMKJbCaewZFs')
-GOOGLE_API_KEY = 'AIzaSyBNTHIYzSDu2swXDL6qxHW0X1W-CoGcZyg'
-CX = '8061ad7ffd11e4c56'
-
+# Создание бота
+bot = telebot.TeleBot(6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM)
 
 @bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "Привет! Используйте команду /create <username> для создания почтового ящика.")
 
-def start(message):
-
-    user = bot.get_me()
-
-    userid = user.id
-
-@bot.message_handler(commands=['delete'])
-def delete(message):
-    if message.reply_to_message:
-        bot.delete_message(message.chat.id, message.reply_to_message.message_id)
-    else:
-        bot.send_message(message.chat.id, 'Нет сообщения для удаления.')
-    
-
-    
-
-@bot.message_handler(commands=['donate'])
-
-def donate(message):
-
-    bot.send_message(message.chat.id, 'Хостинг не бесплатный донатить сюда :D\n\n Payeer: P1018613468', reply_markup=main())
-
-    
-
-@bot.message_handler(content_types=['text'])
-
-
-
-def cont(message):
-
-
-
-    if message.text == 'Го кс' or message.text == 'Кто кс' or message.text == 'кто кс' or message.text == 'го кс' or message.text == 'Кто кс?' or message.text == 'кто кс?' or message.text == 'kto ks'  or message.text == 'Kto ks' or message.text == 'Rnk rc' or message.text == 'rnk rc' or message.text == '/cs' or message.text == '@all':
-
-
-
-        bot.send_message(message.chat.id, f' *Вызвал это меню:* @{message.from_user.username}\n\n @Asia51 @RunDelChaOs @prodcuddly @Shinigamiplay', parse_mode="Markdown")
-
-
-
-        bot.send_message(message.chat.id, '@default_g @FreeManBek @Samuel725 @flatox')
-
-
-
-        bot.send_message(message.chat.id,  '*Удалены из списка: \n@ Mr_Foxmal \n@ Humon_Sub*', parse_mode="Markdown")
-
-        
-
-    if message.text == 'марти' or message.text == 'Марти':
-
-        
-
-        bot.send_message(message.chat.id, 'У Марти маленький писюн!')
-
-        
-
-    if message.text == 'Тест' or message.text == 'тест':
-
-        
-
-        bot.send_message(message.chat.id, (f'@{message.from_user.username} Нигга'))
-
-        
-
-    if '@Kiramax' in message.text:
-
-        bot.delete_message(message.chat.id, message.message_id)
-
-        bot.send_message(message.chat.id,'Он не хочет что-бы его тегали.')
-
-        
-
-    if '@kiramax' in message.text:
-
-        bot.delete_message(message.chat.id, message.message_id)
-
-        bot.send_message(message.chat.id,'Он не хочет что-бы его тегали.')
-
-@bot.inline_handler(lambda query: len(query.query) > 0)
-def inline_query(query):
+@bot.message_handler(commands=['create'])
+def create_email(message):
     try:
-        search_query = query.query
-        url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&cx={CX}&key={GOOGLE_API_KEY}&searchType=image&num=10"
-        response = requests.get(url)
-        result = response.json()
+        username = message.text.split()[1]
+    except IndexError:
+        bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create_email username")
+        return
+    
+    domain = 'sukaa.ru'  # Ваш домен
+    email = f"{username}@{domain}"
+    password = 'temporary_password'  # Генерация временного пароля
 
-        if 'items' in result:
-            images = result['items']
-            results = []
-            for i, image in enumerate(images):
-                results.append(types.InlineQueryResultPhoto(
-                    id=str(i),
-                    photo_url=image['link'],
-                    thumb_url=image['link'],
-                    caption=f'Image {i+1}'
-                ))
-
-            bot.answer_inline_query(query.id, results, cache_time=1)
-        else:
-            bot.answer_inline_query(query.id, [], switch_pm_text='Картинки не найдены', switch_pm_parameter='no_images')
-
-    except Exception as e:
-        print(e)
-
+    # Запуск браузера и выполнение действий
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.get(FASTPANEL_URL)
+    
+    # Ввод данных для входа
+    driver.find_element(By.NAME, 'username').send_keys(FASTPANEL_USERNAME)
+    driver.find_element(By.NAME, 'password').send_keys(FASTPANEL_PASSWORD)
+    driver.find_element(By.NAME, 'password').send_keys(Keys.RETURN)
+    
+    time.sleep(5)  # Дождаться загрузки панели
+    
+    # Нажать на кнопку "НОВЫЙ ЯЩИК"
+    new_mailbox_button = driver.find_element(By.XPATH, '//button[text()="Новый ящик"]')
+    new_mailbox_button.click()
+    
+    time.sleep(2)  # Дождаться открытия формы
+    
+    # Заполнение формы для создания нового почтового ящика
+    driver.find_element(By.NAME, 'email').send_keys(email)
+    driver.find_element(By.NAME, 'password').send_keys(password)
+    driver.find_element(By.NAME, 'password_confirm').send_keys(password)
+    
+    # Нажать на кнопку для сохранения нового почтового ящика
+    save_button = driver.find_element(By.XPATH, '//button[text()="Сохранить"]')
+    save_button.click()
+    
+    time.sleep(2)  # Дождаться создания почтового ящика
+    
+    driver.quit()
+    bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
+    
 bot.polling()
