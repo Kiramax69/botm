@@ -1,12 +1,14 @@
+
 import telebot
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import logging
+import os
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)  # Используем имя текущего модуля
+logger = logging.getLogger(name)  # Используем имя текущего модуля
 
 # Initialize the Telegram bot
 bot = telebot.TeleBot('7141698892:AAGMs0WFMADNOpGapquT42edJrXYbnSDDHc')
@@ -29,7 +31,12 @@ def place_order(message):
     driver = None  # Инициализация переменной driver
 
     try:
-        service = Service('/path/to/chromedriver')  # Используем Service для указания пути к ChromeDriver
+        # Убедитесь, что путь к ChromeDriver правильный
+        chromedriver_path = '/usr/local/bin/chromedriver'
+        if not os.path.exists(chromedriver_path):
+            raise FileNotFoundError(f"ChromeDriver not found at {chromedriver_path}")
+        
+        service = Service(chromedriver_path)  # Используем Service для указания пути к ChromeDriver
         driver = webdriver.Chrome(service=service, options=options)
         logger.info("WebDriver initialized successfully")
         
