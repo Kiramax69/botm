@@ -15,7 +15,7 @@ FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
 # Создание бота
-bot = telebot.TeleBot(6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM)
+bot = telebot.TeleBot(6332761306:AAHVl8VjgeKsOQH55r7PSAWwfEJ8sMcSPEI)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
