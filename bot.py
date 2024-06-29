@@ -1,68 +1,79 @@
 import telebot
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-import time
+from telebot import types
+import requests
+import re
 
-# Установите свой токен бота Telegram
-TELEGRAM_BOT_TOKEN = '6332761306:AAH08CnPCaNxIMTxqhGYts4ebX_nz1c75nM'
+bot = telebot.TeleBot('1970145138:AAE0BxCzW-0PbbQKpF8sl0vjMKJbCaewZFs')
+GOOGLE_API_KEY = 'AIzaSyBNTHIYzSDu2swXDL6qxHW0X1W-CoGcZyg'
+CX = '8061ad7ffd11e4c56'
 
-# Данные для входа в FastPanel
-FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru:8888/vhosts/1/emails/1/boxes'
-FASTPANEL_USERNAME = 'fastuser'
-FASTPANEL_PASSWORD = 'Aeng7oi7sonv'
-
-# Создание бота
-bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
+def main():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    item1 = types.KeyboardButton('Го кс')
+    item2 = types.KeyboardButton('Тест')
+    markup.add(item1, item2)
+    return markup
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Привет! Используйте команду /create_email <username> для создания почтового ящика.")
+def start(message):
+    bot.send_message(message.chat.id, 'Бот группы Co-Op CS:GO', reply_markup=main())
 
-@bot.message_handler(commands=['create_email'])
-def create_email(message):
-    try:
-        username = message.text.split()[1]
-    except IndexError:
-        bot.reply_to(message, "Пожалуйста, укажите имя пользователя для почтового ящика. Пример: /create_email username")
-        return
-    
-    domain = 'sukaa.ru'  # Ваш домен
-    email = f"{username}@{domain}"
-    password = 'temporary_password'  # Генерация временного пароля
+@bot.message_handler(commands=['delete'])
+def delete(message):
+    if message.reply_to_message:
+        bot.delete_message(message.chat.id, message.reply_to_message.message_id)
+    else:
+        bot.send_message(message.chat.id, 'Нет сообщения для удаления.')
 
-    # Запуск браузера и выполнение действий
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    driver.get(FASTPANEL_URL)
+@bot.message_handler(commands=['donate'])
+def donate(message):
+    bot.send_message(message.chat.id, 'Хостинг не бесплатный донатить сюда :D\n\n Payeer: P1018613468', reply_markup=main())
+
+@bot.message_handler(content_types=['text'])
+def cont(message):
+    cs_phrases = [
+        'Го кс', 'Кто кс', 'кто кс', 'го кс', 
+        'Кто кс?', 'кто кс?', 'kto ks', 'Kto ks', 
+        'Rnk rc', 'rnk rc', '/cs'
+    ]
     
-    # Ввод данных для входа
-    driver.find_element(By.NAME, 'username').send_keys(FASTPANEL_USERNAME)
-    driver.find_element(By.NAME, 'password').send_keys(FASTPANEL_PASSWORD)
-    driver.find_element(By.NAME, 'password').send_keys(Keys.RETURN)
+    all_phrases = ['@all', '@All', '@ALL', '@aLL', 'алл', 'Алл']
     
-    time.sleep(5)  # Дождаться загрузки панели
-    
-    # Нажать на кнопку "НОВЫЙ ЯЩИК"
-    new_mailbox_button = driver.find_element(By.XPATH, '//button[text()="Новый ящик"]')
-    new_mailbox_button.click()
-    
-    time.sleep(2)  # Дождаться открытия формы
-    
-    # Заполнение формы для создания нового почтового ящика
-    driver.find_element(By.NAME, 'email').send_keys(email)
-    driver.find_element(By.NAME, 'password').send_keys(password)
-    driver.find_element(By.NAME, 'password_confirm').send_keys(password)
-    
-    # Нажать на кнопку для сохранения нового почтового ящика
-    save_button = driver.find_element(By.XPATH, '//button[text()="Сохранить"]')
-    save_button.click()
-    
-    time.sleep(2)  # Дождаться создания почтового ящика
-    
-    driver.quit()
-    bot.reply_to(message, f'Почтовый ящик {email} успешно создан с паролем {password}.')
+    if message.text in cs_phrases:
+        send_csgo_invite(message)
+    elif message.text in all_phrases:
+        send_all_invite(message)
+    elif re.search(r'(?i)марти', message.text):
+        bot.send_message(message.chat.id, 'У Марти маленький писюн!')
+    elif re.search(r'(?i)тест', message.text):
+        bot.send_message(message.chat.id, f'@{message.from_user.username} Нигга')
+    elif re.search(r'@kiramax', message.text, re.IGNORECASE):
+        bot.delete_message(message.chat.id, message.message_id)
+        bot.send_message(message.chat.id, 'Он не хочет что-бы его тегали.')
+    elif re.search(r'(?i)^найди (.+)', message.text):
+        search_images(message)
+    else:
+        bot.send_message(message.chat.id, 'Неизвестная команда.')
+
+def send_csgo_invite(message):
+    bot.send_message(message.chat.id, f' *Позвал в коес:* @{message.from_user.username}\n\n @Asia51 @RunDelChaOs @prodcuddly @Shinigamiplay', parse_mode="Markdown")
+    bot.send_message(message.chat.id, '@default_g @FreeManBek @Samuel725 @flatox')
+    bot.send_message(message.chat.id,  '*Временно не катают: \n@Mr_Foxmal \n@Humon_Sub*', parse_mode="Markdown")
+
+def send_all_invite(message):
+    bot.send_message(message.chat.id, f' *Вызвал это меню:* @{message.from_user.username}\n\n @Asia51 @RunDelChaOs @prodcuddly @Shinigamiplay', parse_mode="Markdown")
+    bot.send_message(message.chat.id, '@default_g @FreeManBek @Samuel725 @flatox @Mr_Foxmal @Humon_Sub', parse_mode="Markdown")
+
+def search_images(message):
+    search_query = re.search(r'(?i)^найди (.+)', message.text).group(1)
+    url = f"https://www.googleapis.com/customsearch/v1?q={search_query}&cx={CX}&key={GOOGLE_API_KEY}&searchType=image&num=1"
+    response = requests.get(url)
+    result = response.json()
+
+    if 'items' in result:
+        image_url = result['items'][0]['link']
+        bot.send_photo(message.chat.id, image_url)
+    else:
+        bot.send_message(message.chat.id, 'Картинки не найдены.')
 
 bot.polling()
-
