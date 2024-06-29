@@ -6,13 +6,15 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
+TELEGRAMBOT_API = '7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k'
+
 # Данные для входа в FastPanel
 FASTPANEL_URL = 'https://cv3909137.vps.regruhosting.ru'
 FASTPANEL_USERNAME = 'fastuser'
 FASTPANEL_PASSWORD = 'Aeng7oi7sohv'
 
 # Создание бота
-bot = telebot.TeleBot(7141698892:AAG_euLwatIth9yFB7QXIkGCJtTac5Boh1k)
+bot = telebot.TeleBot(TELEGRAMBOT_API)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
