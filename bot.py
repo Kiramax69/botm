@@ -29,4 +29,7 @@ def place_order(message):
         # Click the "ЗАКАЗАТЬ" button
         order_button = driver.find_element(By.XPATH, '//button[contains(text(), "ЗАКАЗАТЬ")]')
         order_button.click()
+
+
+
 bot.polling()
