@@ -2,7 +2,7 @@ import telebot
 import requests
 import re
 
-bot = telebot.TeleBot('ВАШ_ТОКЕН_БОТА')
+bot = telebot.TeleBot('1970145138:AAE0BxCzW-0PbbQKpF8sl0vjMKJbCaewZFs')
 GOOGLE_API_KEY = 'AIzaSyBNTHIYzSDu2swXDL6qxHW0X1W-CoGcZyg'
 CX = '8061ad7ffd11e4c56'
 
